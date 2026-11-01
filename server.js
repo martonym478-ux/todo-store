@@ -381,20 +381,39 @@ app.get("/api/admin/users", auth, adminOnly, async (req, res) => {
   } catch (err) { srvErr(req, res, err); }
 });
 
-const PORT = process.env.PORT || 3000;
+async function connectDB() {
+  if (mongoose.connection.readyState === 1) return;
 
-if (!process.env.JWT_SECRET) {
-  console.error("JWT_SECRET غير موجود في ملف .env");
-  process.exit(1);
+  if (!global.dbPromise) {
+    global.dbPromise = mongoose
+      .connect(process.env.MONGODB_URI)
+      .catch((err) => {
+        global.dbPromise = null;
+        throw err;
+      });
+  }
+
+  return global.dbPromise;
 }
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log("Connected to MongoDB");
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-  })
-  .catch(err => {
-    console.error("MongoDB connection failed:", err.message);
+if (require.main === module) {
+  if (!process.env.JWT_SECRET || !process.env.MONGODB_URI) {
+    console.error("JWT_SECRET أو MONGODB_URI غير موجود");
     process.exit(1);
-  });
+  }
+
+  connectDB()
+    .then(() => {
+      console.log("Connected to MongoDB");
+      const PORT = process.env.PORT || 3000;
+      app.listen(PORT, () =>
+        console.log(`Server running on http://localhost:${PORT}`)
+      );
+    })
+    .catch((err) => {
+      console.error("MongoDB connection failed:", err.message);
+      process.exit(1);
+    });
+}
+
+module.exports = { app, connectDB };
