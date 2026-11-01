@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ToDo — Shop Smart. Live Better.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=14">
+</head>
+<body>
+<div class="top"><div class="wrap tb">
+  <div class="tl"><span data-i="top1"></span><span class="sep" aria-hidden="true"></span><span data-i="top2"></span></div>
+  <div class="tr">
+    <button class="tg wide" id="bSet">⚙️ <span data-i="setT"></span></button></div>
+</div></div>
+
+<div class="sticky">
+  <header class="wrap hd">
+    <button class="logo" data-n="home" aria-label="ToDo home">
+      <svg viewBox="0 0 48 52" width="46" height="50" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 16h32l3 26a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5z"/><path d="M17 16v-3a7 7 0 0 1 14 0v3"/><path d="M17 29q7 7 14 0"/><circle cx="18" cy="24" r=".6"/><circle cx="30" cy="24" r=".6"/></svg>
+      <span class="wm">To<b>Do</b></span></button>
+    <form class="search" id="sf" role="search"><svg viewBox="0 0 24 24" class="ic sm"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" data-ip="ph" placeholder="Search for products..." aria-label="Search" enterkeyhint="search" autocomplete="off"></form>
+    <div class="act">
+      <button class="ab" id="bAcc"><svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span><b id="uL1"></b><small id="uL2"></small></span></button>
+      <button class="ab" id="bWish"><svg viewBox="0 0 24 24" class="ic"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z"/></svg><span class="cb wb" id="wcnt">0</span><span><b data-i="wishL"></b><small id="wc">(0)</small></span></button>
+      <button class="ab cartb" id="bCart"><svg viewBox="0 0 24 24" class="ic"><path d="M2 3h3l2.5 12h11L21 7H6"/><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/></svg><span class="cb" id="cnt">0</span><span><b data-i="cartL"></b><small id="cartTot">($0.00)</small></span></button>
+    </div>
+  </header>
+  <nav class="wrap nv" aria-label="Main">
+    <button class="allc" id="bAll" data-i="allc"></button>
+    <div class="dd" id="ddm"></div>
+    <button class="l" data-n="home" data-i="nHome"></button>
+    <button class="l" data-n="products" data-i="nProd"></button>
+    <button class="l" data-n="offers" data-i="nOff"></button>
+    <button class="l" data-n="about" data-i="nAbout"></button>
+    <button class="l" data-n="contact" data-i="nContact"></button>
+  </nav>
+</div>
+
+<main class="wrap">
+<div id="homeV">
+  <section class="hero" id="hero" aria-label="Featured offers"></section>
+  <section class="feat" aria-label="Benefits">
+    <div><span>🚚</span><p><b data-i="f1b"></b><small data-i="f1s"></small></p></div>
+    <div><span>🛡️</span><p><b data-i="f2b"></b><small data-i="f2s"></small></p></div>
+    <div><span>🎧</span><p><b data-i="f3b"></b><small data-i="f3s"></small></p></div>
+    <div><span>🔄</span><p><b data-i="f4b"></b><small data-i="f4s"></small></p></div>
+  </section>
+  <div class="lay">
+    <aside class="side"><h2 data-i="cats"></h2><div class="catl" id="catL"></div></aside>
+    <div>
+      <section id="popW"><div class="sh"><h2 data-i="pop"></h2><button class="va" id="vall" data-i="viewAll"></button></div><div class="grid" id="pop"></div></section>
+      <section id="all"><div class="sh" style="margin-top:30px"><h2 id="ttl"></h2>
+        <label><span data-i="sortBy"></span> <select id="sort"><option value="" data-i="s0"></option><option value="lo" data-i="s1"></option><option value="hi" data-i="s2"></option><option value="rt" data-i="s3"></option></select></label></div>
+        <div class="grid" id="grid"></div></section>
+    </div>
+  </div>
+</div>
+<section id="cartV" hidden></section>
+<section id="wishV" hidden></section>
+<section id="ordV" hidden></section>
+</main>
+<footer class="wrap ft"><span data-i="foot"></span></footer>
+
+<div class="shade" id="shade"></div>
+<div class="modal wide" id="prodM" role="dialog" aria-label="Product details"></div>
+<div class="modal" id="adrM" role="dialog" aria-label="Addresses"></div>
+<div class="modal" id="infoM" role="dialog" aria-label="Information"></div>
+
+<div class="modal" id="authM" role="dialog" aria-label="Account">
+  <button class="x" data-close data-ia="close">×</button>
+  <div class="tabs" id="aTabs"><button id="tL" class="on" data-i="tabL"></button><button id="tS" data-i="tabR"></button></div>
+  <h2 id="aTitle" style="margin-top:0" hidden></h2>
+  <p class="mut" id="aMsg" hidden></p>
+  <div id="nameW" hidden><label><span data-i="lName"></span><input id="aN" autocomplete="name"></label></div>
+  <div id="emW"><label><span data-i="lEmail"></span><input id="aE" type="email" autocomplete="email"></label></div>
+  <div id="codeW" hidden><label><span data-i="lCode"></span><input id="aC" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456"></label></div>
+  <div id="pwW"><label><span id="aPL" data-i="lPass"></span><input id="aP" type="password" autocomplete="current-password"></label></div>
+  <div id="regW" hidden><label><span data-i="lPass2"></span><input id="aP2" type="password" autocomplete="new-password"></label><ul class="pw" id="pwR"></ul></div>
+  <button class="btn" id="aGo" style="width:100%"></button>
+  <div class="alinks"><button type="button" class="lk" id="fgt" data-i="forgot"></button><button type="button" class="lk" id="rsd" hidden></button><button type="button" class="lk" id="bkL" data-i="backLogin" hidden></button></div>
+  <p class="err" id="aErr"></p>
+</div>
+
+<div class="modal" id="setM" role="dialog" aria-label="Settings">
+  <button class="x" data-close data-ia="close">×</button>
+  <h2 style="margin-top:0" data-i="setT"></h2>
+  <label><span data-i="setLang"></span><select id="sLang"><option value="en">English</option><option value="ar">العربية</option></select></label>
+  <label><span data-i="setCur"></span><select id="sCur"><option value="USD">USD — $</option><option value="EGP">EGP — جنيه مصري / Egyptian Pound</option><option value="SAR">SAR — ريال سعودي / Saudi Riyal</option><option value="AED">AED — درهم إماراتي / UAE Dirham</option><option value="EUR">EUR — €</option></select></label>
+  <label><span data-i="setTheme"></span><select id="sTheme"><option value="auto" data-i="thA"></option><option value="light" data-i="thL"></option><option value="dark" data-i="thD"></option></select></label>
+  <p class="mut" style="font-size:13px" data-i="rateNote"></p>
+</div>
+
+<div class="modal" id="acctM" role="dialog" aria-label="My account">
+  <button class="x" data-close data-ia="close">×</button>
+  <h2 style="margin-top:0" data-i="myAcc"></h2><p id="acctTxt"></p>
+  <button class="btn" id="out" data-i="signOut"></button>
+</div>
+
+<div class="modal" id="payM" role="dialog" aria-label="Checkout">
+  <button class="x" data-close data-ia="close">×</button>
+  <h2 style="margin-top:0" data-i="checkout"></h2>
+  <label><span data-i="lName"></span><input id="oN" autocomplete="name"></label>
+  <label><span data-i="lPhone"></span><input id="oP" type="tel" autocomplete="tel"></label>
+  <label><span data-i="lAddr"></span><input id="oA" autocomplete="street-address"></label>
+  <div id="oAd"></div><div id="oPay"></div>
+  <div class="sum" id="oS"></div>
+  <button class="btn" id="oGo" style="width:100%" data-i="place"></button>
+  <p class="err" id="oErr"></p>
+</div>
+
+<div class="chat">
+  <div class="cbox" id="cbox"><header data-i="botT"></header><div class="msgs" id="msgs"></div>
+    <form id="cf"><input id="ci" data-ip="botPh" placeholder="" aria-label="Message"><button data-i="send"></button></form></div>
+  <button id="cbtn" aria-label="Open assistant">🤖</button>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="script.js?v=15"></script>
+</body>
+</html>
