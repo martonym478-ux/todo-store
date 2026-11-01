@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const Product = require("./models/Product");
 const Order = require("./models/Order");
 const User = require("./models/User");
@@ -13,6 +15,33 @@ const { sendCode } = require("./mailer");
 const m = (req, en, ar) => (req.headers["x-lang"] === "ar" ? ar : en); // رسائل بلغة المستخدم
 
 const app = express();
+
+// ---- حماية أساسية للنشر ----
+app.set("trust proxy", 1); // الاستضافة (Render) بتحط بروكسي قدام السيرفر
+app.use(helmet({ contentSecurityPolicy: false })); // هيدرز أمان (الـ CSP مقفول لأن الصفحات فيها سكريبتات داخلية)
+const prod = process.env.NODE_ENV === "production";
+const limiter = limit => rateLimit({
+  windowMs: 15 * 60 * 1000, limit, standardHeaders: true, legacyHeaders: false,
+  skip: () => !prod, // بيشتغل على الاستضافة بس، مش وقت التجربة
+  handler: (req, res) => res.status(429).json({ error: m(req, "Too many requests. Please try again later.", "طلبات كثيرة. حاول لاحقًا.") })
+});
+app.use("/api/", limiter(600));
+app.use("/api/auth/", limiter(40));
+
+// اتصال MongoDB بيتعمل مرة واحدة وبيتعاد استخدامه (مهم على Vercel لأن كل طلب ممكن يبدأ من الصفر)
+let connecting = null;
+function connectDB() {
+  if (mongoose.connection.readyState === 1) return Promise.resolve();
+  if (!connecting) connecting = mongoose.connect(process.env.MONGODB_URI).catch(err => { connecting = null; throw err; });
+  return connecting;
+}
+app.use("/api", async (req, res, next) => {
+  try { await connectDB(); next(); }
+  catch (err) {
+    console.error("MongoDB connection failed:", err.message);
+    res.status(503).json({ error: m(req, "Database unavailable. Please try again.", "قاعدة البيانات غير متاحة. حاول مرة أخرى.") });
+  }
+});
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -381,39 +410,22 @@ app.get("/api/admin/users", auth, adminOnly, async (req, res) => {
   } catch (err) { srvErr(req, res, err); }
 });
 
-async function connectDB() {
-  if (mongoose.connection.readyState === 1) return;
+const PORT = process.env.PORT || 3000;
 
-  if (!global.dbPromise) {
-    global.dbPromise = mongoose
-      .connect(process.env.MONGODB_URI)
-      .catch((err) => {
-        global.dbPromise = null;
-        throw err;
-      });
-  }
+if (!process.env.JWT_SECRET) console.error("JWT_SECRET غير موجود في ملف .env / إعدادات الاستضافة");
 
-  return global.dbPromise;
-}
-
+// تشغيل عادي (npm start): بنتصل بالداتابيز ونفتح البورت. على Vercel بيتم استيراد app بس.
 if (require.main === module) {
-  if (!process.env.JWT_SECRET || !process.env.MONGODB_URI) {
-    console.error("JWT_SECRET أو MONGODB_URI غير موجود");
-    process.exit(1);
-  }
-
+  if (!process.env.JWT_SECRET) process.exit(1);
   connectDB()
     .then(() => {
       console.log("Connected to MongoDB");
-      const PORT = process.env.PORT || 3000;
-      app.listen(PORT, () =>
-        console.log(`Server running on http://localhost:${PORT}`)
-      );
+      app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
     })
-    .catch((err) => {
+    .catch(err => {
       console.error("MongoDB connection failed:", err.message);
       process.exit(1);
     });
 }
 
-module.exports = { app, connectDB };
+module.exports = app;
